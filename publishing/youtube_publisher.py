@@ -64,15 +64,38 @@ def _upload_video(youtube, path: str, body: dict) -> str:
     return resp["id"]
 
 
+def _build_chapters(story: dict, pre_roll: float = 3.0) -> str:
+    """Generate YouTube chapter timestamps for longform videos."""
+    scenes    = story.get("scenes", [])
+    narration = story.get("narration", "")
+    if len(scenes) < 3 or not narration:
+        return ""
+    total_words = max(len(narration.split()), 1)
+    total_dur   = total_words / 2.5   # ~2.5 words/sec TTS
+    lines = ["0:00 Introduction"]
+    t = pre_roll
+    for i, scene in enumerate(scenes):
+        seg   = scene.get("narration_segment", "")
+        words = len(seg.split()) if seg else (total_words // len(scenes))
+        mm, ss = int(t) // 60, int(t) % 60
+        label = f"Claim {i + 1}" if i < len(scenes) - 1 else "Verdict"
+        # Append first 4 words of the scene for context
+        snippet = " ".join(seg.split()[:4]).rstrip(".,!?") if seg else ""
+        lines.append(f"{mm}:{ss:02d} {label}: {snippet}...")
+        t += (words / total_words) * total_dur
+    return "\n".join(lines)
+
+
 def _build_description(story: dict, is_shorts: bool = False) -> str:
+    hook    = story.get("description_hook", story.get("hook", ""))
     claim   = story.get("claim_statement", "")
     reality = story.get("reality_statement", "")
     verdict = story.get("verdict", "")
-    hook    = story.get("description_hook", story.get("hook", ""))
     url     = story.get("url", "")
     source  = story.get("source", "")
 
     sections = []
+    # Hook always first — this is what YouTube shows before "Show more"
     if hook:
         sections.append(hook)
     if claim:
@@ -81,6 +104,13 @@ def _build_description(story: dict, is_shorts: bool = False) -> str:
         sections.append(f"THE REALITY: {reality}")
     if verdict:
         sections.append(f"THE VERDICT: {verdict}")
+
+    # Chapter markers for longform only
+    if not is_shorts:
+        chapters = _build_chapters(story)
+        if chapters:
+            sections.append(f"\n{chapters}")
+
     if url:
         sections.append(f"\nSource: {source}\n{url}")
 
