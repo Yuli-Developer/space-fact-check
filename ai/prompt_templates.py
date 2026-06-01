@@ -37,8 +37,8 @@ Narrator style: {style}
 Return ONLY valid JSON (no markdown):
 {{
   "youtube_title": "<punchy title under 55 chars — e.g. 'NASA Found Life? The REAL Story' or 'This AI Claim Is Totally Wrong'>",
-  "hook": "<first sentence, 10 words max — start with the viral claim or the shocking reality>",
-  "narration": "<STRICT max 120 words. Structure: 1) state the viral claim (10-15 words) 2) 'But here is what actually happened / what is really true' (50-60 words of real science) 3) 'The verdict:' (20-30 words of surprising truth that is more mind-blowing than the original claim). Fast pace. Short sentences.>",
+  "hook": "<first sentence, 10 words max — MUST open with a shocking specific fact or number. Example: 'This galaxy is 13 billion years old — and it shouldn't exist.' or 'NASA just found something that breaks physics.' NEVER start with 'So', 'Did you know', 'Today', or 'Have you heard'.>",
+  "narration": "<STRICT max 120 words. FIRST WORDS must be a mind-blowing specific fact/number/discovery. Structure: 1) shocking specific fact (10-15 words) 2) 'But here is what actually happened' (50-60 words of real science) 3) 'The verdict:' (20-30 words of surprising truth more mind-blowing than the claim). Fast pace. Short sentences. No filler intros.>",
   "claim_statement": "<the viral/wrong version in one sentence>",
   "reality_statement": "<the actual scientific truth in one sentence>",
   "verdict": "<why the truth is more interesting than the myth>",
@@ -106,7 +106,7 @@ Total: {word_count} words. {num_scenes} scenes for the main video (HORIZONTAL 16
 Return ONLY valid JSON (no markdown):
 {{
   "youtube_title": "<punchy title under 60 chars — e.g. '5 Space Claims Scientists Just Debunked'>",
-  "hook": "<first 2 sentences — hook the viewer immediately>",
+  "hook": "<first 2 sentences — MUST open with a specific mind-blowing number or fact. Example: '5 things you believe about space are completely wrong. And number 3 will break your brain.' NEVER start with 'Today', 'Welcome', 'So', or 'Have you ever'.>",
   "narration": "<full {word_count} word narration. Intro → Claim 1 (anchor story) → Claim 2 → Claim 3 → Claim 4 → Claim 5 → Outro. Each claim: state it → debunk it → verdict twist.>",
   "shorts_narration": "<60-second version under 120 words — just the most shocking single claim>",
   "claim_statement": "<the most shocking claim in one sentence>",
