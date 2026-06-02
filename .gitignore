@@ -1,0 +1,13 @@
+.env
+*.pickle
+client_secrets.json
+client_secret.json
+output/
+data/
+logs/
+assets/music/*.mp3
+assets/music/*.wav
+__pycache__/
+*.pyc
+.DS_Store
+.batch.lock
