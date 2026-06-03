@@ -47,7 +47,10 @@ for attempt in range(4):
         result = run_full_pipeline(upload=True)
         break
     except Exception as e:
-        is_transient = any(x in str(e) for x in ("503", "UNAVAILABLE", "429", "Resource has been exhausted"))
+        is_transient = (
+            any(x in str(e) for x in ("503", "UNAVAILABLE", "429", "Resource has been exhausted"))
+            or type(e).__name__ == "JSONDecodeError"
+        )
         if attempt < 3 and is_transient:
             wait = delays[min(attempt, len(delays) - 1)]
             logger.warning(f"Transient API error (attempt {attempt + 1}/3), retrying in {wait}s: {e}")

@@ -21,7 +21,16 @@ def _parse_response(resp) -> dict:
         raw = raw.split("```")[1]
         if raw.startswith("json"):
             raw = raw[4:]
-    return json.loads(raw.strip())
+    raw = raw.strip()
+    try:
+        return json.loads(raw)
+    except json.JSONDecodeError:
+        # Gemini sometimes adds text before/after or truncates — extract by boundaries
+        start = raw.find("{")
+        end   = raw.rfind("}") + 1
+        if start != -1 and end > start:
+            return json.loads(raw[start:end])
+        raise
 
 
 def generate_script(story: dict, style: str = None) -> dict:

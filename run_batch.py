@@ -34,7 +34,10 @@ def _run_with_retry(upload: bool, max_retries: int = 3) -> dict:
         try:
             return run_full_pipeline(upload=upload)
         except Exception as e:
-            is_transient = any(x in str(e) for x in ("503", "UNAVAILABLE", "429", "Resource has been exhausted"))
+            is_transient = (
+                any(x in str(e) for x in ("503", "UNAVAILABLE", "429", "Resource has been exhausted"))
+                or type(e).__name__ == "JSONDecodeError"
+            )
             if attempt < max_retries and is_transient:
                 wait = delays[min(attempt, len(delays) - 1)]
                 logger.warning(f"Transient API error (attempt {attempt + 1}/{max_retries}), retrying in {wait}s: {e}")
