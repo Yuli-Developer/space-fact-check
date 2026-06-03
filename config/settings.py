@@ -24,7 +24,7 @@ COMFYUI_URL  = os.getenv("COMFYUI_URL", "http://localhost:8188")
 
 STORIES_PER_RUN  = int(os.getenv("STORIES_PER_RUN", "1"))
 TOP_STORIES_POOL = int(os.getenv("TOP_STORIES_POOL", "30"))
-MIN_VIRAL_SCORE  = float(os.getenv("MIN_VIRAL_SCORE", "2.5"))
+MIN_VIRAL_SCORE  = float(os.getenv("MIN_VIRAL_SCORE", "3.0"))
 SCENES_PER_VIDEO = int(os.getenv("SCENES_PER_VIDEO", "4"))
 SHORTS_ONLY      = os.getenv("SHORTS_ONLY", "true").lower() == "true"
 MAX_SHORTS_WORDS = int(os.getenv("MAX_SHORTS_WORDS", "120"))

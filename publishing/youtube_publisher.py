@@ -24,6 +24,18 @@ CHANNEL_TAGS = [
 SHORTS_TAGS = ["shorts", "youtubeshorts", "spaceshorts", "scienceshorts", "factcheckshorts"]
 
 
+def _best_title(story: dict, max_len: int = 90) -> str:
+    """Pick the highest-CTR title from variants, falling back to youtube_title."""
+    candidates = story.get("title_variants", []) + [story.get("youtube_title", story.get("title", ""))]
+    # Prefer titles with curiosity signals: question marks, numbers, power words
+    POWER_WORDS = ("wrong", "actually", "real", "truth", "why", "how", "what", "never", "always", "secret", "?", "wilder", "breaks")
+    def _score(t):
+        t_lower = t.lower()
+        return sum(1 for w in POWER_WORDS if w in t_lower)
+    ranked = sorted([t for t in candidates if t and len(t) <= max_len], key=_score, reverse=True)
+    return ranked[0] if ranked else story.get("youtube_title", story.get("title", ""))
+
+
 def _trim_tags(tags: list) -> list:
     result, total = [], 0
     for t in tags:
@@ -131,7 +143,7 @@ def publish_shorts(story: dict, run_id: str) -> str | None:
         return None
 
     youtube = _get_service()
-    title   = f"{story.get('youtube_title', story['title'])[:90]} #Shorts"
+    title   = f"{_best_title(story, max_len=90)} #Shorts"
     tags    = _trim_tags(story.get("tags", []) + CHANNEL_TAGS + SHORTS_TAGS)
 
     body = {
@@ -177,7 +189,7 @@ def publish_main(story: dict, run_id: str) -> str | None:
         return None
 
     youtube = _get_service()
-    title   = story.get("youtube_title", story["title"])[:100]
+    title   = _best_title(story, max_len=100)
     tags    = _trim_tags(story.get("tags", []) + CHANNEL_TAGS)
 
     body = {

@@ -15,16 +15,16 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 logger = logging.getLogger(__name__)
 
 CLAIM_QUERIES = [
-    "alien life discovered 2025",
-    "NASA discovery space 2025",
+    "alien life discovered 2026",
+    "NASA discovery space 2026",
     "scientists find proof extraterrestrial",
-    "AI sentient consciousness 2025",
+    "AI sentient consciousness 2026",
     "space breakthrough discovery",
     "mars life evidence found",
     "black hole mystery solved",
-    "james webb telescope discovery",
+    "james webb telescope discovery 2026",
     "SpaceX Mars colony timeline",
-    "AI surpasses human intelligence",
+    "AI surpasses human intelligence 2026",
 ]
 
 RSS_FEEDS = [
