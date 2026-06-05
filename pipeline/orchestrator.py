@@ -3,6 +3,8 @@ Space Fact Check — Pipeline Orchestrator.
 discover → score → fact-check script → images → voice → compose → thumbnails → publish
 """
 import logging
+import os
+import time
 from datetime import datetime
 
 from discovery.engine          import run_discovery
@@ -22,6 +24,23 @@ from storage.database             import init_db, save_story, mark_used, save_ru
 from config.settings              import STORIES_PER_RUN, LONGFORM_ONLY
 
 logger = logging.getLogger(__name__)
+
+
+def _cleanup_old_output(keep_days: int = 2) -> None:
+    """Delete output files older than keep_days after successful upload."""
+    cutoff = time.time() - keep_days * 86400
+    removed = 0
+    for subdir in ("shorts", "videos", "audio", "images", "thumbnails"):
+        folder = os.path.join("output", subdir)
+        if not os.path.isdir(folder):
+            continue
+        for fname in os.listdir(folder):
+            fpath = os.path.join(folder, fname)
+            if os.path.isfile(fpath) and os.path.getmtime(fpath) < cutoff:
+                os.remove(fpath)
+                removed += 1
+    if removed:
+        logger.info(f"Cleanup: removed {removed} output files older than {keep_days} days")
 
 
 def run_full_pipeline(
@@ -149,6 +168,7 @@ def run_full_pipeline(
             logger.info(f"Shorts: {result['shorts_url']}")
         logger.info("=" * 60)
 
+        _cleanup_old_output()
         return result
 
     except Exception as e:
