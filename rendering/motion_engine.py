@@ -415,7 +415,7 @@ def make_animated_portrait(image_path: str, duration: float,
 
 # ── Apply motion by name ────────────────────────────────────────────────────
 
-def apply_motion(image_path: str, duration: float, effect: str) -> VideoClip:
+def apply_motion(image_path: str, duration: float, effect: str, canvas_w=None, canvas_h=None) -> VideoClip:
     """Route to the correct motion effect by name."""
     if effect == "zoom_burst":
         return zoom_burst_clip(image_path, duration)
