@@ -26,6 +26,18 @@ from config.settings              import STORIES_PER_RUN, LONGFORM_ONLY
 logger = logging.getLogger(__name__)
 
 
+def _ping_healthchecks(success: bool = True) -> None:
+    """Ping healthchecks.io to report job success or failure."""
+    url = os.getenv("HEALTHCHECK_URL", "")
+    if not url:
+        return
+    try:
+        import urllib.request
+        urllib.request.urlopen(url if success else f"{url.rstrip('/')}/fail", timeout=5)
+    except Exception:
+        pass
+
+
 def _cleanup_old_output(keep_days: int = 1) -> None:
     """Delete output files older than keep_days after successful upload."""
     cutoff = time.time() - keep_days * 86400
@@ -169,6 +181,7 @@ def run_full_pipeline(
         logger.info("=" * 60)
 
         _cleanup_old_output()
+        _ping_healthchecks(True)
         return result
 
     except Exception as e:
@@ -176,4 +189,5 @@ def run_full_pipeline(
         logger.error(f"Pipeline failed: {e}\n{traceback.format_exc()}")
         update_run(run_id, status="failed", error=str(e),
                    finished_at=datetime.utcnow().isoformat())
+        _ping_healthchecks(False)
         raise
