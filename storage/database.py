@@ -106,13 +106,32 @@ def url_hash(url: str) -> str:
     return hashlib.sha256(url.encode()).hexdigest()
 
 
-def is_duplicate(url: str) -> bool:
+def _normalize_title(title: str) -> str:
+    """Strip ' - <Outlet>' suffix that Google News appends, lowercase."""
+    t = title.rsplit(" - ", 1)[0].strip().lower()
+    return t
+
+
+def is_duplicate(url: str, title: str = "") -> bool:
     conn = get_conn()
+    # URL-based check
     row = conn.execute(
         "SELECT 1 FROM stories WHERE url_hash = ?", (url_hash(url),)
     ).fetchone()
+    if row:
+        conn.close()
+        return True
+    # Title-based check — catches same article syndicated across outlets
+    if title:
+        norm = _normalize_title(title)
+        rows = conn.execute("SELECT title FROM stories").fetchall()
+        conn.close()
+        for r in rows:
+            if _normalize_title(r["title"]) == norm:
+                return True
+        return False
     conn.close()
-    return row is not None
+    return False
 
 
 def save_story(story: dict):

@@ -26,7 +26,7 @@ def run_discovery(limit_per_source: int = 10) -> list[dict]:
     seen_urls, stories = set(), []
     for s in raw:
         url = s.get("url", "")
-        if not url or url in seen_urls or is_duplicate(url):
+        if not url or url in seen_urls or is_duplicate(url, s.get("title", "")):
             continue
         seen_urls.add(url)
         stories.append(_normalize(s))
