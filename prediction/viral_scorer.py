@@ -110,4 +110,9 @@ def score_and_rank(stories: list, top_n: int = 5) -> list:
     passed = [s for s in scored if s["viral_score"] >= MIN_VIRAL_SCORE]
     ranked = sorted(passed, key=lambda x: x["viral_score"], reverse=True)
     logger.info(f"Scored {len(stories)} → {len(passed)} passed → top {min(top_n, len(ranked))} selected")
+    if not passed and scored:
+        top_misses = sorted(scored, key=lambda x: x["viral_score"], reverse=True)[:5]
+        logger.warning(f"No stories above threshold {MIN_VIRAL_SCORE}. Top 5 scores:")
+        for s in top_misses:
+            logger.warning(f"  {s['viral_score']:.1f}  {s.get('title', '')[:80]}")
     return ranked[:top_n]
